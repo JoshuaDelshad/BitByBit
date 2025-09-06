@@ -26,3 +26,5 @@ TensorFlow / PyTorch: For building and serving deep learning models, including n
 
 Deployment & Environment
 Nginx: A high-performance web server used as a reverse proxy in front of Gunicorn to handle incoming traffic, serve static files, and manage security.
+
+Temporarily using .sqlite3 for user logins
