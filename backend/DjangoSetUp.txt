@@ -7,3 +7,7 @@ then run:
     pip install django djangorestframework django-cors-headers
 
     this will install django, rest API framework, and cross origin for allowing specific IPs
+
+
+to start server:
+    python manage.py runserver
