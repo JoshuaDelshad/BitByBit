@@ -4,7 +4,7 @@
 Gamers struggle to find a single, user-friendly platform where they can browse video games, consoles, and accessories, compare across platforms, and make quick purchases. Existing e-commerce sites are either too broad (general online stores) or lack intelligent recommendations.  
 Also, our e-commerce website will provide unique statistical data for each game to boost customer satisfaction.  
 
-[Prototype Link](https://ee5fc77b95d0407490eef3227e34fce6-main.projects.builder.my)
+
 
 **How the Application should function:**
 
