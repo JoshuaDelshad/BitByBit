@@ -41,7 +41,7 @@ Also, our e-commerce website will provide unique statistical data for each game 
 
 # 3. Feature Requirements
 
-## Required Features (Core Functionality – MVP)
+## Required Features 
 - Homepage navigation (Games, Consoles, Accessories).
 - Login/Registration.
 - Browse by platform (PS4, Switch, etc.).
@@ -49,14 +49,14 @@ Also, our e-commerce website will provide unique statistical data for each game 
 - Add to cart (pop-out view with clear/remove options).
 - Checkout flow.
 
-## Desired Features (Improves Usability & Appearance)
+## Desired Features 
 - Enhanced search filters (price range, genre, release date).
 - Clean and responsive UI design (mobile-first).
 - Cart saved across sessions (user can log out and return later).
 - Sorting options (by popularity, rating, or price).
 - Simple “recommended for you” section based on trending games.
 
-## Aspirational Features (Makes the App Stand Out)
+## Aspirational Features
 - Smart chatbot (**LangChain + RAWG API**) with live stats, reviews, and recommendations.
 - Personalized recommendations based on browsing/purchase history.
 - Wishlist/Favorites.
