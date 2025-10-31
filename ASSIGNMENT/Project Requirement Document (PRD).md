@@ -4,7 +4,11 @@
 Gamers struggle to find a single, user-friendly platform where they can browse video games, consoles, and accessories, compare across platforms, and make quick purchases. Existing e-commerce sites are either too broad (general online stores) or lack intelligent recommendations.  
 Also, our e-commerce website will provide unique statistical data for each game to boost customer satisfaction.  
 
+<<<<<<< HEAD
 [Prototype Link](https://ee5fc77b95d0407490eef3227e34fce6-main.projects.builder.my)
+=======
+
+>>>>>>> fazlul
 
 **How the Application should function:**
 
@@ -41,7 +45,11 @@ Also, our e-commerce website will provide unique statistical data for each game 
 
 # 3. Feature Requirements
 
+<<<<<<< HEAD
 ## Required Features (Core Functionality – MVP)
+=======
+## Required Features 
+>>>>>>> fazlul
 - Homepage navigation (Games, Consoles, Accessories).
 - Login/Registration.
 - Browse by platform (PS4, Switch, etc.).
@@ -49,14 +57,22 @@ Also, our e-commerce website will provide unique statistical data for each game 
 - Add to cart (pop-out view with clear/remove options).
 - Checkout flow.
 
+<<<<<<< HEAD
 ## Desired Features (Improves Usability & Appearance)
+=======
+## Desired Features 
+>>>>>>> fazlul
 - Enhanced search filters (price range, genre, release date).
 - Clean and responsive UI design (mobile-first).
 - Cart saved across sessions (user can log out and return later).
 - Sorting options (by popularity, rating, or price).
 - Simple “recommended for you” section based on trending games.
 
+<<<<<<< HEAD
 ## Aspirational Features (Makes the App Stand Out)
+=======
+## Aspirational Features
+>>>>>>> fazlul
 - Smart chatbot (**LangChain + RAWG API**) with live stats, reviews, and recommendations.
 - Personalized recommendations based on browsing/purchase history.
 - Wishlist/Favorites.
