@@ -29,7 +29,6 @@ export default function SignInScreen({ onBack }: any) {
   let buttonText = 'Login';
   let switchText = "Don't have an account? Register";
 
-
   if (isRegistering) {
     titleText = 'Create Account';
     subtitleText = 'Join the gamers paradise!';
