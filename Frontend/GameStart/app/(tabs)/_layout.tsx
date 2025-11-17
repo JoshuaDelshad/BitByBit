@@ -11,10 +11,25 @@ export default function TabsLayout() {
         headerShown: false,
        }} 
       />
-      <Tabs.Screen 
-      name="explore" 
+
+        <Tabs.Screen 
+      name="search" 
       options={{ 
-        title: 'Explore',
+        title: 'Search',
+        headerShown: false, 
+        }} />
+
+        <Tabs.Screen 
+      name="cart" 
+      options={{ 
+        title: 'Cart',
+        headerShown: false, 
+        }} />
+
+        <Tabs.Screen 
+      name="profile" 
+      options={{ 
+        title: 'Profile',
         headerShown: false, 
         }} />
 

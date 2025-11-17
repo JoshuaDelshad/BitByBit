@@ -133,7 +133,7 @@ export default function SignInScreen({ onBack }: any) {
 
       {/* Password Input */}
       <TextInput
-        style={styles.input}
+        style={[styles.input, errors.email && styles.errorInput]}
         placeholder="Password"
         placeholderTextColor="#ccc"
         secureTextEntry
