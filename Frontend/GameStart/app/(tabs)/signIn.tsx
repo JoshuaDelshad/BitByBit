@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { router } from 'expo-router';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator} from 'react-native';
+import { loginWithEmailPassword, registerNewUser } from '../../api/callProfileAPI'; // ⭐ NEW
 
 
 export default function SignInScreen({ onBack }: any) {
@@ -10,9 +11,10 @@ export default function SignInScreen({ onBack }: any) {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState<{[k:string]: string}>({}); // uses :string to only allow string keys
+  const [errors, setErrors] = useState<{[k:string]: string}>({});
+  const [loading, setLoading] = useState(false);  
 
-    const validate = () => {
+  const validate = () => {
     let valid = true;
     let newErrors: { [k: string]: string } = {};
 
@@ -48,39 +50,53 @@ export default function SignInScreen({ onBack }: any) {
     return valid;
   };
 
-// Handle Submit for Main Login Button
-   const LogInHandleSumbmit = () => {
-    if (validate()) {
-      // You can call your login API here
-      console.log("Logging in with:", { email, password });
-      router.push('/'); // Navigate back to Home Page
+  // UPDATED: Handle Submit for Main Login / Register Button
+  const LogInHandleSumbmit = async () => {
+    if (!validate()) return;
+
+    try {
+      setLoading(true);
+
+      if (isRegistering) {
+        // CALL THE REGISTER API
+        const res = await registerNewUser(firstName, lastName, email.trim(), password);
+        Alert.alert("Success", "Account created successfully!");
+         router.push('/');
+        } else {
+        // LOGIN: call Python backend
+        const res = await loginWithEmailPassword(email.trim(), password);
+        console.log("Backend login success:", res);
+
+        // TODO: if backend returns token, you can store it here later
+        // e.g. await SecureStore.setItemAsync("authToken", res.token);
+
+        Alert.alert("Success", "Logged in successfully");
+        router.push('/'); // Navigate back to Home Page
+      }
+    } catch (err: any) {
+      console.error(err);
+      Alert.alert("Login failed", err.message || "Please try again");
+    } finally {
+      setLoading(false);
     }
-  };
-  // Handle Submit for Register Button 
-  const registerHandleSubmit = () => {
-    // Not sure About this part
-    if (isRegistering) {
-      console.log('Register:', { firstName, lastName, email, password });
-    } else {
-      console.log('Login:', { email, password });
-    }
-    // Navigate back to Home after Login/Register
-    router.push('/'); 
   };
 
   // Handles Registering Button
   const handleSwitch = () => {
-    setIsRegistering(!isRegistering);
+    setIsRegistering(prev => !prev);
+    setErrors({});
+    setEmail('');
+    setPassword('');
+    setFirstName('');
+    setLastName('');
   };
 
- 
 
   // Titles and Button Titles
   let titleText = 'Welcome Back';
   let subtitleText = 'Login to continue your adventure';
   let buttonText = 'Login';
   let switchText = "Don't have an account? Register";
-
   
   if (isRegistering) {
     titleText = 'Create Account';
@@ -89,13 +105,11 @@ export default function SignInScreen({ onBack }: any) {
     switchText = 'Already have an account? Login';
   }
 
-
   return (
     <View style={styles.signInContainer}>
       <Text style={styles.logo}>GameStart</Text>
       <Text style={styles.title}>{titleText}</Text>
       <Text style={styles.subtitle}>{subtitleText}</Text>
-
 
       {/* First Name and Last Name Inputs in Registration page */}
       {isRegistering && (
@@ -107,7 +121,7 @@ export default function SignInScreen({ onBack }: any) {
             value={firstName}
             onChangeText={setFirstName}
           />
-            {errors.firstName && <Text style={styles.errorText}>{errors.firstName}</Text>}
+          {errors.firstName && <Text style={styles.errorText}>{errors.firstName}</Text>}
 
           <TextInput
             style={[styles.input, errors.lastName && styles.errorInput]}
@@ -116,44 +130,63 @@ export default function SignInScreen({ onBack }: any) {
             value={lastName}
             onChangeText={setLastName}
           />
-            {errors.lastName && <Text style={styles.errorText}>{errors.lastName}</Text>}
+          {errors.lastName && <Text style={styles.errorText}>{errors.lastName}</Text>}
         </>
       )}
 
       {/* Email Input */}
       <TextInput
-        style={[styles.input, errors.email && styles.errorInput]}
-        placeholder="Email"
-        placeholderTextColor="#ccc"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
+          style={[styles.input, errors.email && styles.errorInput]}
+          placeholder="Email"
+          placeholderTextColor="#ccc"
+          keyboardType="email-address"
+          value={email}
+          onChangeText={(text) => {
+          setEmail(text);
+           if (errors.email) {
+            setErrors(prev => ({ ...prev, email: "" }));
+          }
+        }}
       />
-       {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+
+      {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
 
       {/* Password Input */}
       <TextInput
-        style={[styles.input, errors.email && styles.errorInput]}
+        style={[styles.input, errors.password && styles.errorInput]}
         placeholder="Password"
         placeholderTextColor="#ccc"
         secureTextEntry
         value={password}
-        onChangeText={setPassword}
+        onChangeText={(text) => {
+          setPassword(text);
+          if (errors.password) {
+            setErrors(prev => ({ ...prev, password: "" }));
+          }
+        }}
       />
+
       {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
 
-
-      {/* Register Button */}
-      <TouchableOpacity style={styles.button} onPress={LogInHandleSumbmit}>
-        <Text style={styles.buttonText}>{buttonText}</Text>
+      {/* Main Login/Register Button */}
+      <TouchableOpacity 
+        style={[styles.button, loading && { opacity: 0.7 }]} 
+        onPress={LogInHandleSumbmit}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator />
+        ) : (
+          <Text style={styles.buttonText}>{buttonText}</Text>
+        )}
       </TouchableOpacity>
 
-      {/* "Already have an account? Login" Button */}
+      {/* "Already have an account? Login" / "Don't have an account? Register" */}
       <TouchableOpacity onPress={handleSwitch}>
         <Text style={styles.switchText}>{switchText}</Text>
       </TouchableOpacity>
 
-      {/* Main Login Button*/}
+      {/* Back to Home Button */}
       <TouchableOpacity onPress={() => router.push('/')}> 
         <Text style={styles.backText}>← Back to Home</Text>
       </TouchableOpacity>
@@ -231,3 +264,5 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
 });
+
+
