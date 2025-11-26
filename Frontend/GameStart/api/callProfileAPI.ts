@@ -1,30 +1,35 @@
 // ⭐ NEW: backend base URL – change this to your FastAPI server
-const BACKEND_URL = "http://localhost:(PORT)/com.gamestart/v1/home/userauthentication";
+const BACKEND_URL = "http://localhost:8000/com.gamestart/v1/home/userauthentication/login/";
 
 // e.g. "http://10.0.2.2:8000" for Android emulator
 // or your LAN IP if testing on physical phone
 
 // ⭐ NEW: helper function to call Python /login endpoint
 export async function loginWithEmailPassword(email: string, password: string) {
-  const res = await fetch(`${BACKEND_URL}/login`, {
+  const Formdata = new FormData();
+  Formdata.append("email", email);
+  Formdata.append("password", password); // appending body here instead of after to attach with body
+  const res = await fetch(`${BACKEND_URL}`, {
     method: "POST",
+    body: Formdata, // body contains email and password                 
     headers: {
       "Content-Type": "application/json",   // tell backend body is JSON
     },
-    body: JSON.stringify({ email, password }), // JSON you send to Python
   });
 
   if (!res.ok) {
     // try to read error message from backend
     let message = "Login failed";
     try {
-      const data = await res.json();
-      message = data.detail || data.message || message;
+      console.log(res)
+      // const data = await res.json();
+      // message = data.detail || data.message || message;
     } catch {
       // ignore JSON parse errors
     }
     throw new Error(message);
   }
+      console.log(res)
 
   const data = await res.json(); // what Python returns (e.g. { token, email })
   return data;

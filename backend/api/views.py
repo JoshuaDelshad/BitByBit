@@ -6,8 +6,15 @@ from django.http import JsonResponse
 def hello(request):
     return JsonResponse({"message": "Hello World"})
 
-def homepage(request):
-    return JsonResponse({'resp': 'user logged'})
+def login(request):
+    username = request.POST.get('email')
+    password = request.POST.get('password')
+
+    
+
+    data = { 'message' : f'{username}, {password}' }
+    
+    return JsonResponse(data)
 
 
 

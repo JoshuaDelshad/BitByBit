@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import hello, homepage
+from .views import hello, login
 
 urlpatterns = [
     path('helper/', hello, ),
-    path('gamestarthome/', homepage, ),
+    path('com.gamestart/v1/home/userauthentication/login/<str:user_identifier>', login, ),
 ]
