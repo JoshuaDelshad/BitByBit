@@ -8,7 +8,7 @@ def hello(request):
 
 def login(request, user_identifier):
     data = { 'message' : f'{user_identifier}' }
-    
+    print(data)
     return JsonResponse(data)
 
 

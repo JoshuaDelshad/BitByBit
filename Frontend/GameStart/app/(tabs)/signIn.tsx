@@ -52,7 +52,7 @@ export default function SignInScreen({ onBack }: any) {
 
   // UPDATED: Handle Submit for Main Login / Register Button
   const LogInHandleSumbmit = async () => {
-    if (!validate()) return;
+    // if (!validate()) return;
 
 
     try {

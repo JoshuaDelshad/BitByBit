@@ -6,6 +6,7 @@ const BACKEND_URL = "http://localhost:8000/com.gamestart/v1/home/userauthenticat
 
 // ⭐ NEW: helper function to call Python /login endpoint
 export async function loginWithEmailPassword(email: string, password: string) {
+  console.log({BACKEND_URL},{email},{password})
   const res = await fetch(`${BACKEND_URL}~${email}~${password}`, {
     method: "POST",
     headers: {
