@@ -66,8 +66,6 @@ export default function SignInScreen({ onBack }: any) {
         } else {
         // LOGIN: call Python backend
         const res = await loginWithEmailPassword(email.trim(), password);
-        console.log("Backend login success:", res);
-
         // TODO: if backend returns token, you can store it here later
         // e.g. await SecureStore.setItemAsync("authToken", res.token);
 
