@@ -1,10 +1,5 @@
-// ⭐ NEW: backend base URL – change this to your FastAPI server
 const BACKEND_URL = "http://localhost:8000/com.gamestart/v1/home/userauthentication/login/";
 
-// e.g. "http://10.0.2.2:8000" for Android emulator
-// or your LAN IP if testing on physical phone
-
-// ⭐ NEW: helper function to call Python /login endpoint
 export async function loginWithEmailPassword(email: string, password: string) {
   const res = await fetch(`${BACKEND_URL}~${email}~${password}`, {
     method: "POST",
