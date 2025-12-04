@@ -1,9 +1,8 @@
-// app/(tabs)/_layout.tsx  (or wherever your tabs layout lives)
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';      // npx expo install @expo/vector-icons
-import { CartProvider, useCart } from '../../context/CartContext'; // 🔁 adjust path
+import { CartProvider, useCart } from '../../context/CartContext'; 
 
 // 🔹 Custom Cart tab icon that shows the item count badge
 function CartTabIcon({ color, size }: { color: string; size: number }) {

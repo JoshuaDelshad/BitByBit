@@ -14,6 +14,10 @@ export default function SignInScreen({ onBack }: any) {
   const [errors, setErrors] = useState<{[k:string]: string}>({});
   const [loading, setLoading] = useState(false);  
 
+  // ✅ NEW: status shown on the page
+  const [statusMessage, setStatusMessage] = useState('');
+  const [statusType, setStatusType] = useState<'success' | 'error' | ''>('');
+
   const validate = () => {
     let valid = true;
     let newErrors: { [k: string]: string } = {};
@@ -52,7 +56,12 @@ export default function SignInScreen({ onBack }: any) {
 
   // UPDATED: Handle Submit for Main Login / Register Button
   const LogInHandleSumbmit = async () => {
-    if (!validate()) return;
+    if (!validate())
+      return;
+
+    // Clear old status
+    setStatusMessage('');
+    setStatusType('');
 
     try {
       setLoading(true);
@@ -60,22 +69,36 @@ export default function SignInScreen({ onBack }: any) {
       if (isRegistering) {
         // CALL THE REGISTER API
         const res = await registerNewUser(firstName, lastName, email.trim(), password);
+
+        // You can also check for res.success if your API returns it
+        setStatusType('success');
+        setStatusMessage('Account created successfully!');
         Alert.alert("Success", "Account created successfully!");
-         router.push('/');
-        } else {
+        router.push('/');
+      } else {
         // LOGIN: call Python backend
         const res = await loginWithEmailPassword(email.trim(), password);
         console.log("Backend login success:", res);
 
-        // TODO: if backend returns token, you can store it here later
-        // e.g. await SecureStore.setItemAsync("authToken", res.token);
+        // If your backend returns something like res.success / res.message,
+        // you could do:
+        // if (!res.success) { throw new Error(res.message || 'Login failed'); }
 
+        setStatusType('success');
+        setStatusMessage('Logged in successfully!');
         Alert.alert("Success", "Logged in successfully");
         router.push('/'); // Navigate back to Home Page
       }
     } catch (err: any) {
       console.error(err);
-      Alert.alert("Login failed", err.message || "Please try again");
+
+      const msg = err?.message || "Please try again";
+
+      // Show failure on screen + alert
+      setStatusType('error');
+      setStatusMessage(msg);
+
+      Alert.alert("Login failed", msg);
     } finally {
       setLoading(false);
     }
@@ -89,6 +112,9 @@ export default function SignInScreen({ onBack }: any) {
     setPassword('');
     setFirstName('');
     setLastName('');
+    // ✅ Clear status when switching
+    setStatusMessage('');
+    setStatusType('');
   };
 
 
@@ -181,6 +207,18 @@ export default function SignInScreen({ onBack }: any) {
         )}
       </TouchableOpacity>
 
+      {/* ✅ Status shown under the button */}
+      {statusMessage !== '' && (
+        <Text
+          style={[
+            styles.statusText,
+            statusType === 'success' ? styles.statusSuccess : styles.statusError
+          ]}
+        >
+          {statusMessage}
+        </Text>
+      )}
+
       {/* "Already have an account? Login" / "Don't have an account? Register" */}
       <TouchableOpacity onPress={handleSwitch}>
         <Text style={styles.switchText}>{switchText}</Text>
@@ -263,6 +301,16 @@ const styles = StyleSheet.create({
     color: "red",
     marginBottom: 8,
   },
+  // ✅ NEW styles for status
+  statusText: {
+    marginTop: 10,
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  statusSuccess: {
+    color: '#4caf50',
+  },
+  statusError: {
+    color: 'red',
+  },
 });
-
-
