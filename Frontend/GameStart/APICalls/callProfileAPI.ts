@@ -46,13 +46,16 @@ export async function registerNewUser(
   );
 
   if (!res.ok) {
-    let msg = "Registration failed";
+    let message = "Sign Up failed";
     try {
-      const data = await res.json();
-      msg = (data.detail || data.message || data.error || msg) as string;
+      console.log(res);
+      // const data = await res.json();
+      // message = data.detail || data.message || message;
     } catch {}
-    throw new Error(msg);
+    throw new Error(message);
   }
 
-  return res.json();
+  console.log(res);
+  const data = await res.json();
+  return data;
 }

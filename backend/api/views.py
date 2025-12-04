@@ -1,24 +1,30 @@
-from django.shortcuts import render
-import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+
+from .simple_account_checker import check_credentials
 from .simple_account_creator import create_account
 
-# import the checker from the same package
-from .simple_account_checker import check_credentials
 
 def hello(request):
     return JsonResponse({"message": "Hello World"})
 
+
 @csrf_exempt
 def login(request, user_identifier):
-    # robust split: accept "~email~password" or "email~password"
+    """
+    Handles:
+      POST /com.gamestart/v1/home/userauthentication/login/~email~password
+    """
     parts = [p for p in user_identifier.split("~") if p]
+
     if len(parts) != 2:
-        return JsonResponse({"error": "bad format, expected '~email~password' or 'email~password'"}, status=400)
+        return JsonResponse(
+            {"error": "bad format, expected '~email~password' or 'email~password'"},
+            status=400,
+        )
 
     email, password = parts
-    print(f"Username: {email}, Password: {password}")
+    print(f"Login attempt -> email={email}, password={password}")
 
     try:
         authenticated = check_credentials(email, password)
@@ -32,30 +38,45 @@ def login(request, user_identifier):
     return JsonResponse({"email": email, "authenticated": bool(authenticated)})
 
 
-
 @csrf_exempt
-def create(request, user_info):
-    # Expected: "~first~last~email~password" or "first~last~email~password"
+def register(request, user_info):
+    """
+    Handles:
+      POST /com.gamestart/v1/home/userauthentication/register/~first~last~email~password
+    """
+    print(f"Raw user_info from URL: {user_info}")
     parts = [p for p in user_info.split("~") if p]
 
     if len(parts) != 4:
         return JsonResponse(
-            {"error": "bad format, expected '~first~last~email~password' or 'first~last~email~password'"},
-            status=400
+            {
+                "error": (
+                    "bad format, expected '~first~last~email~password' "
+                    "or 'first~last~email~password'"
+                )
+            },
+            status=400,
         )
 
     first, last, email, password = parts
+    print(f"Register attempt -> {first} {last}, email={email}")
 
-    print(f"Creating account: {first} {last}, email={email}")
-
-    result = create_account(first, last, email, password)
+    try:
+        result = create_account(first, last, email, password)
+    except Exception as e:
+        return JsonResponse(
+            {"created": False, "error": f"creator error: {str(e)}"}, status=500
+        )
 
     if not result.get("created"):
+        # e.g. {"created": False, "error": "Email already exists"}
         return JsonResponse({"created": False, "error": result.get("error")}, status=400)
 
-    return JsonResponse({
-        "created": True,
-        "email": email,
-        "first": first,
-        "last": last
-    })
+    return JsonResponse(
+        {
+            "created": True,
+            "email": email,
+            "first": first,
+            "last": last,
+        }
+    )
