@@ -2,6 +2,7 @@ from django.shortcuts import render
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from .simple_account_creator import create_account
 
 # import the checker from the same package
 from .simple_account_checker import check_credentials
@@ -32,3 +33,29 @@ def login(request, user_identifier):
 
 
 
+@csrf_exempt
+def create(request, user_info):
+    # Expected: "~first~last~email~password" or "first~last~email~password"
+    parts = [p for p in user_info.split("~") if p]
+
+    if len(parts) != 4:
+        return JsonResponse(
+            {"error": "bad format, expected '~first~last~email~password' or 'first~last~email~password'"},
+            status=400
+        )
+
+    first, last, email, password = parts
+
+    print(f"Creating account: {first} {last}, email={email}")
+
+    result = create_account(first, last, email, password)
+
+    if not result.get("created"):
+        return JsonResponse({"created": False, "error": result.get("error")}, status=400)
+
+    return JsonResponse({
+        "created": True,
+        "email": email,
+        "first": first,
+        "last": last
+    })
