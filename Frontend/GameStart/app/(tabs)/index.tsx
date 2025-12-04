@@ -46,18 +46,27 @@ export default function App() {
         <Text style={styles.title}>Gear up. Game on.</Text>
         <Text style={styles.subtitle}>Gamers Paradise</Text>
         <View style={styles.cardContainer}>
-          {[
-            { title: 'Video Games', key: 'videoGames' },
-            { title: 'Consoles', key: 'consoles' },
-            { title: 'Accessories', key: 'accessories' },
-          ].map((item) => (
-            <TouchableOpacity style={styles.card} key={item.key}>
-              <Image source={{ uri: images.get(item.key) }} style={styles.image} />
-              <Text style={styles.cardTitle}>{item.title}</Text>
-              <Text style={styles.cardText}>Tap to explore</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+  {[
+    { title: 'Video Games', key: 'videoGames', category: 'Games' },         // 
+    { title: 'Consoles', key: 'consoles', category: 'Consoles' },           // 
+    { title: 'Accessories', key: 'accessories', category: 'Accessories' },  // 
+  ].map((item) => (
+    <TouchableOpacity
+      style={styles.card}
+      key={item.key}
+      onPress={() =>
+        router.push({
+          pathname: '/search',
+          params: { category: item.category }, // send category to Search screen
+        })
+      }
+    >
+      <Image source={{ uri: images.get(item.key) }} style={styles.image} />
+      <Text style={styles.cardTitle}>{item.title}</Text>
+      <Text style={styles.cardText}>Tap to explore</Text>
+    </TouchableOpacity>
+  ))}
+</View>
       </ScrollView>
     </View>
   );

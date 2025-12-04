@@ -1,18 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
-import { router } from 'expo-router';
+import {View, Text, TextInput, FlatList, Image, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator,} from 'react-native';
+import { router, useLocalSearchParams } from 'expo-router';   // 👈 add useLocalSearchParams
 import { useCart } from '../../context/CartContext'; // 👈 adjust path
-
+import CategoryBar, { Category } from '../../components/CategoryBar'; // 👈 adjust path
 type StoreItem = {
   id: number;
   name: string;
@@ -26,17 +16,49 @@ export default function SearchScreen() {
   const [consoles, setConsoles] = useState<StoreItem[]>([]);
   const [accessories, setAccessories] = useState<StoreItem[]>([]);
   const [items, setItems] = useState<StoreItem[]>([]);
-  const [category, setCategory] = useState("All");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const { addToCart, items: cartItems } = useCart();      // 👈 from context
-  const cartCount = cartItems.reduce((sum, i) => sum + i.quantity, 0); // 👈 total qty
+  // 👇 read category from navigation params
+  // 👇 read category from navigation params
+const { category: categoryParam } = useLocalSearchParams<{ category?: string | string[] }>();
+
+const [category, setCategory] = useState<Category>("All");
+
+  // const [category, setCategory] = useState<Category>(() => {
+  // if (
+  //    categoryParam === "Games" ||
+  //    categoryParam === "Consoles" ||
+  //    categoryParam === "Accessories"
+  // ) {
+  //    return categoryParam;
+  //  }
+  // return "All";
+  // });
+
+  useEffect(() => {
+  let value = categoryParam;
+
+  // handle case where param is an array 
+  if (Array.isArray(value)) {
+    value = value[0];
+  }
+
+  if (value === "Games" || value === "Consoles" || value === "Accessories") {
+    setCategory(value);
+  } else {
+    setCategory("All");
+  }
+}, [categoryParam]);
+
+  const { addToCart, items: cartItems } = useCart();      // from context
+  const cartCount = cartItems.reduce((sum, i) => sum + i.quantity, 0); // total qty of items in cart
 
   const API_KEY = "c1db19e921334df6accd48b12d95fb5a";
   const { width } = Dimensions.get("window");
   const cardWidth = width / 2 - 20;
 
+  //API call to fetch games from RAWG
   useEffect(() => {
     fetch(`https://api.rawg.io/api/games?key=${API_KEY}&page_size=30`)
       .then(res => res.json())
@@ -133,7 +155,7 @@ export default function SearchScreen() {
 
           <Text style={styles.signInText}>Sign In</Text>
 
-          {/* 👇 header cart button uses cartCount and navigates to Cart tab */}
+          {/* header cart button uses cartCount and navigates to Cart tab */}
           <TouchableOpacity
             style={styles.cartBtn}
             onPress={() => router.push('/cart')}
@@ -158,7 +180,7 @@ export default function SearchScreen() {
           <TouchableOpacity
             key={c}
             style={[styles.filterButton, category === c && styles.activeFilter]}
-            onPress={() => setCategory(c)}
+            onPress={() => setCategory(c as Category)}
           >
             <Text
               style={[
@@ -195,7 +217,7 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: "#000",
-    paddingTop: 40,
+    paddingTop: 10,
     paddingBottom: 10,
     alignItems: "center",
   },
