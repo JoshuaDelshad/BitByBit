@@ -1,13 +1,18 @@
+// app/(tabs)/orders.tsx
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import { useAuth } from "./context/AuthContext";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import { router } from "expo-router";
 
 export default function OrdersScreen() {
-  const { user } = useAuth();
-
-  // Placeholder: Replace with actual API call later if needed
-  const orders = user?.orders ?? [];   // expecting: user.orders = []
+  // Later you can load real orders from backend.
+  // For now, just pretend there are none:
+  const orders: any[] = [];
 
   return (
     <ScrollView style={styles.container}>
@@ -24,7 +29,7 @@ export default function OrdersScreen() {
             <Text style={styles.orderDate}>{order.date}</Text>
 
             <View style={styles.itemsBox}>
-              {order.items.map((item, index) => (
+              {order.items.map((item: any, index: number) => (
                 <Text key={index} style={styles.itemText}>
                   • {item.name} (x{item.qty})
                 </Text>

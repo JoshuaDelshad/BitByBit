@@ -21,9 +21,10 @@ const BORDER = '#1f2937';
 export default function CheckoutScreen() {
   // read total from route params
   const { total } = useLocalSearchParams<{ total?: string }>();
-  const [method, setMethod] = useState<'credit' | 'debit'>('credit');
 
-  const displayTotal = total ?? '0.00';
+  const numericTotal = total ? parseFloat(total) : 0;
+  const displayTotal = numericTotal.toFixed(2);
+  const [method, setMethod] = useState<"credit" | "debit">("credit");
 
   return (
     <SafeAreaView style={styles.safe}>
