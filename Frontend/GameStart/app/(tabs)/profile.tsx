@@ -54,7 +54,7 @@ const ProfileScreen = () => {
 <View style={styles.menuCard}>
   <TouchableOpacity
     style={styles.menuItem}
-    onPress={() => router.push("/orders")}
+    onPress={() => router.push("/orders")}   // 👈 relative route
   >
     <View style={styles.menuLeft}>
       <Text style={styles.menuIcon}>📦</Text>
@@ -63,6 +63,7 @@ const ProfileScreen = () => {
     <Text style={styles.menuChevron}>›</Text>
   </TouchableOpacity>
 </View>
+
 
 
       {/* Sign Out */}
