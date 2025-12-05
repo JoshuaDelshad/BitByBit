@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const LOGIN_URL =
   "http://localhost:8000/com.gamestart/v1/home/userauthentication/login/";
 const REGISTER_URL =
@@ -7,12 +6,6 @@ const REGISTER_URL =
 // keep this as-is (you said assume it works)
 export async function loginWithEmailPassword(email: string, password: string) {
   const res = await fetch(`${LOGIN_URL}~${email}~${password}`, {
-=======
-const BACKEND_URL = "http://localhost:8000/com.gamestart/v1/home/userauthentication/login/";
-
-export async function loginWithEmailPassword(email: string, password: string) {
-  const res = await fetch(`${BACKEND_URL}~${email}~${password}`, {
->>>>>>> main
     method: "POST",
     headers: {
       "Content-Type": "application/json",

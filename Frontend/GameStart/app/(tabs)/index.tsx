@@ -1,10 +1,19 @@
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
-
+import { useAuth } from './context/AuthContext'; // ⬅️ adjust path if needed
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  ScrollView
+} from 'react-native';
 
 export default function App() {
   const [showSignIn, setShowSignIn] = useState(false);
+  const { user } = useAuth();  // ⬅️ get logged-in user from context
 
   const images = new Map([
     ['videoGames', 'https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/header.jpg'],
@@ -12,9 +21,18 @@ export default function App() {
     ['accessories', 'https://assets.xboxservices.com/assets/59/10/5910d098-6cb4-459e-a3bf-10972df27ac7.jpg?n=Xbox-Wireless-Controller_Image-Hero_1084_Blue_1920x831_01.jpg'],
   ]);
 
-  // if (showSignIn) {
-  //   return <SignInScreen onBack={() => setShowSignIn(false)} />;
-  // }
+  const isLoggedIn = !!user;
+  const signInLabel = isLoggedIn
+    ? (user.first || user.email || 'Profile')   // what text to show when logged in
+    : 'Sign In';
+
+  const handleSignInPress = () => {
+    if (isLoggedIn) {
+      router.push('/profile');
+    } else {
+      router.push('/signIn');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -22,21 +40,24 @@ export default function App() {
       <View style={styles.header}>
         <View style={styles.navbar}>
           <Text style={styles.logo}>GameStart</Text>
-          
-          <TouchableOpacity style={styles.signInButton} onPress={() => router.push('/signIn')}>
-        <Text style={styles.signInText}>Sign In</Text>
+
+          {/* 🔹 This button now shows name/email when logged in */}
+          <TouchableOpacity style={styles.signInButton} onPress={handleSignInPress}>
+            <Text style={styles.signInText}>{signInLabel}</Text>
           </TouchableOpacity>
+
           <TouchableOpacity style={styles.cartButton}>
-        <Text style={styles.cartText}>Cart (0)</Text>
+            <Text style={styles.cartText}>Cart (0)</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={{width: '95%'}} onPress={() => router.push('/search')}>
+
+        <TouchableOpacity style={{ width: '95%' }} onPress={() => router.push('/search')}>
           <TextInput
-        style={styles.searchBar}
-        placeholder="Search games, consoles, accessories..."
-        placeholderTextColor="#ccc"
-        editable={false}
-        pointerEvents="none"
+            style={styles.searchBar}
+            placeholder="Search games, consoles, accessories..."
+            placeholderTextColor="#ccc"
+            editable={false}
+            pointerEvents="none"
           />
         </TouchableOpacity>
       </View>
@@ -45,38 +66,36 @@ export default function App() {
       <ScrollView contentContainerStyle={styles.scrollArea}>
         <Text style={styles.title}>Gear up. Game on.</Text>
         <Text style={styles.subtitle}>Gamers Paradise</Text>
+
         <View style={styles.cardContainer}>
-  {[
-    { title: 'Video Games', key: 'videoGames', category: 'Games' },         // 
-    { title: 'Consoles', key: 'consoles', category: 'Consoles' },           // 
-    { title: 'Accessories', key: 'accessories', category: 'Accessories' },  // 
-  ].map((item) => (
-    <TouchableOpacity
-      style={styles.card}
-      key={item.key}
-      onPress={() =>
-        router.push({
-          pathname: '/search',
-          params: { category: item.category }, // send category to Search screen
-        })
-      }
-    >
-      <Image source={{ uri: images.get(item.key) }} style={styles.image} />
-      <Text style={styles.cardTitle}>{item.title}</Text>
-      <Text style={styles.cardText}>Tap to explore</Text>
-    </TouchableOpacity>
-  ))}
-</View>
+          {[
+            { title: 'Video Games', key: 'videoGames', category: 'Games' },
+            { title: 'Consoles', key: 'consoles', category: 'Consoles' },
+            { title: 'Accessories', key: 'accessories', category: 'Accessories' },
+          ].map((item) => (
+            <TouchableOpacity
+              style={styles.card}
+              key={item.key}
+              onPress={() =>
+                router.push({
+                  pathname: '/search',
+                  params: { category: item.category },
+                })
+              }
+            >
+              <Image source={{ uri: images.get(item.key) }} style={styles.image} />
+              <Text style={styles.cardTitle}>{item.title}</Text>
+              <Text style={styles.cardText}>Tap to explore</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
+  container: { flex: 1, backgroundColor: '#000' },
   header: {
     backgroundColor: '#000',
     paddingTop: 10,
@@ -117,7 +136,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   searchBar: {
-    // width: '95%',
     backgroundColor: '#222',
     color: '#fff',
     borderRadius: 8,
@@ -155,10 +173,7 @@ const styles = StyleSheet.create({
     width: '90%',
     alignItems: 'center',
   },
-  image: {
-    width: '100%',
-    height: 150,
-  },
+  image: { width: '100%', height: 150 },
   cardTitle: {
     color: '#00ffff',
     fontSize: 18,
@@ -170,4 +185,3 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
-

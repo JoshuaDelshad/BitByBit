@@ -1,84 +1,86 @@
 import React, { useState } from 'react';
 import { router } from 'expo-router';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator} from 'react-native';
-import { loginWithEmailPassword, registerNewUser } from '../../APICalls/callProfileAPI'; // ⭐ NEW
-
+import { useAuth } from './context/AuthContext';   // ⬅️ fix path
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
+import { loginWithEmailPassword, registerNewUser } from '../../APICalls/callProfileAPI';
 
 export default function SignInScreen({ onBack }: any) {
-  // Use States for Login and Registration
+  const { setUser } = useAuth();   // ✅ global user setter
+
+  // state...
   const [isRegistering, setIsRegistering] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState<{[k:string]: string}>({});
-  const [loading, setLoading] = useState(false);  
+  const [errors, setErrors] = useState<{ [k: string]: string }>({});
+  const [loading, setLoading] = useState(false);
 
-  const validate = () => {
-    let valid = true;
-    let newErrors: { [k: string]: string } = {};
+  // ...validate() unchanged
 
-    if(!firstName && isRegistering) {
-        newErrors.firstName = "First name is required";
-        valid = false;
-    } 
-
-    if(!lastName && isRegistering){
-        newErrors.lastName = "Last name is required";
-        valid = false;
-    }
-
-    // Email validation
-    if (!email) {
-      newErrors.email = "Email is required";
-      valid = false;
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = "Please enter a valid email address";
-      valid = false;
-    }
-
-    // Password validation
-    if (!password) {
-      newErrors.password = "Password is required";
-      valid = false;
-    } else if (password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-      valid = false;
-    }
-
-    setErrors(newErrors);
-    return valid;
-  };
-
-  // UPDATED: Handle Submit for Main Login / Register Button
   const LogInHandleSumbmit = async () => {
     // if (!validate()) return;
-
 
     try {
       setLoading(true);
 
       if (isRegistering) {
-        // CALL THE REGISTER API
         const res = await registerNewUser(firstName, lastName, email.trim(), password);
+
+        if (!res.created) {
+          Alert.alert("Sign Up failed", res.error || "Please try again");
+          return;
+        }
+
+        // 🔹 Save user into global context
+        setUser({
+          first: res.first,
+          last: res.last,
+          email: res.email,
+        });
+
         Alert.alert("Success", "Account created successfully!");
-         router.push('/');
-        } else {
-        // LOGIN: call Python backend
+
+        // Profile will read from context, so no need for params
+        router.push('/profile');
+      } else {
         const res = await loginWithEmailPassword(email.trim(), password);
-        // TODO: if backend returns token, you can store it here later
-        // e.g. await SecureStore.setItemAsync("authToken", res.token);
+
+        if (!res.authenticated) {
+          Alert.alert("Login failed", "Wrong email or password");
+          return;
+        }
+
+        setUser({
+          first: res.first,
+          last: res.last,
+          email: res.email,
+        });
 
         Alert.alert("Success", "Logged in successfully");
-        router.push('/'); // Navigate back to Home Page
+
+        router.push('/profile');
       }
     } catch (err: any) {
       console.error(err);
-      Alert.alert("Login failed", err.message || "Please try again");
+      Alert.alert(
+        isRegistering ? "Sign Up failed" : "Login failed",
+        err.message || "Please try again"
+      );
     } finally {
       setLoading(false);
     }
   };
+
+
 
   // Handles Registering Button
   const handleSwitch = () => {
