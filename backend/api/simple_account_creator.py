@@ -6,7 +6,7 @@ from typing import Optional
 
 MONGO_URI = "mongodb://localhost:27017"
 DB_NAME = "admin"
-USERS_COLL = "test"   # your collection
+USERS_COLL = "Test"   # your collection
 
 def get_db_client(uri: str = None) -> MongoClient:
     uri = uri or MONGO_URI

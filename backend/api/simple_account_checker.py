@@ -5,7 +5,7 @@ from typing import Optional
 # Match what you actually have in Compass:
 MONGO_URI = "mongodb://localhost:27017"
 DB_NAME = "admin"        # you are using the admin database
-USERS_COLL = "test"      # your collection is called "test"
+USERS_COLL = "Test"      # your collection is called "test"
 
 def get_db_client(uri: str = None) -> MongoClient:
     uri = uri or MONGO_URI
